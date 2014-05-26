@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>mHome</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="js/mqttws31.js"></script>
+        <script src="js/script.js"></script>
+        <script>
+            var Device = function(id, physicalDevice) {
+                this.id = id;
+                this.physical = physicalDevice;
+
+                /** Controls can have range of values unlike switch. */
+                this.value = this.min = this.max = 0;
+                /** If it's a physical device, children are not modifiable. */
+                var active;
+                this.children = 0;
+                this.parent;
+                this.name;
+                this.type = "sensor";
+
+                this.getName = function() {
+                    return !this.name ? this.id : this.name;
+                };
+
+                this.setParent = function(parent) {
+                    this.parent = parent;
+                };
+
+                this.getWidget = function() {
+                    return '<div id="' + this.id + '" class="device">\
+                            <div class="type">' + this.type + '</div>\
+                            <div class="name">' + this.getName() + '</div>\
+                            <div class="child">' + this.value + '</div>\
+                        </div>';
+                };
+            };
+
+            function init() {
+                var b = new Device(1, true);
+                store[b.id] = b;
+                b.type = "device";
+                c = new Device(2, true);
+                console.log(store[b.id]);
+
+
+                d = [b, c];
+                d.forEach(draw);
+                
+                document.getElementById("Physical").className = "input:active";
+            }
+
+        </script>
+        <link rel="stylesheet" type="text/css" href="main.css"/>
+        <style>
+        </style>
+    </head>
+    <body onload="init();">
+        <div>
+            <div id="toolbar">
+                <input type="button" value="Refresh">
+                <input type="button" value="Add">
+            </div>
+            <div id="tabs">
+                <input type="button" value="Physical" id="Physical">
+                <input type="button" value="Virtual">
+                <input type="button" value="Rules">
+                <input type="button" value="Dashboard">
+            </div>
+            <div id="main">
+                <ul id="devices">
+                    <!--li>
+                        <div class="device">
+                            <div class="type">type</div>
+                            <div class="name">name</div>
+                            <div class="child">6</div>
+                        </div>
+                    </li-->
+
+                </ul>
+            </div>
+        </div>
+    </body>
+</html>

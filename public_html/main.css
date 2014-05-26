@@ -1,0 +1,70 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : May 23, 2014, 4:04:07 PM
+    Author     : Anand.Tamariya
+*/
+body {
+    //width: 310px;
+    //font-family: monospace;
+}
+div {
+    border: 1px solid;
+    border-radius: 5px;
+    // box-shadow: 10px 10px 5px #888888;
+}
+div > div  {
+    margin-left:auto;
+    margin-right:auto;
+    margin: 5px
+}
+
+input {
+    border-radius: 5px;
+}
+input:active { background: gray; } 
+
+ul {
+    //list-style-image: url("icon.png");
+    list-style-type: none;
+    //margin-left: 0;
+    padding-left: 0;
+}
+li {
+    //margin-left: 0;
+}
+#toolbar {
+    text-align: right;
+}
+
+#tabs {
+    text-align: center;
+}
+
+.device {
+    border-radius: 0;
+    margin: 5px;
+    //padding: 5px;
+    width: inherit;
+    position: relative;
+}
+.device > div {
+    border: 0;
+    text-align: center;
+}
+.device .type {
+    width: 10%;
+    float: left;
+}
+.device .name {
+    width: 70%;
+    float: left;
+}
+
+/* Default styles first then media queries */
+@media screen and (min-width: 400px)  {}
+@media screen and (min-width: 600px)  {}
+
