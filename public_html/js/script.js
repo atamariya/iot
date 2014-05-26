@@ -57,7 +57,7 @@ var options = {
     }
 };
 
-setTimeout(function() {
+window.setInterval(function() {
     if (!connected) {
         console.log("reconnect");
         client.connect(options);
@@ -72,7 +72,7 @@ function draw(device) {
         node = document.createElement("li");
 
     console.log(device);
-    node.innerHTML = device.getWidget();
+    node.innerHTML = getWidget(device);
     var parent = document.getElementById("devices");
     parent.appendChild(node);
 }

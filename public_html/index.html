@@ -19,41 +19,41 @@ and open the template in the editor.
                 /** Controls can have range of values unlike switch. */
                 this.value = this.min = this.max = 0;
                 /** If it's a physical device, children are not modifiable. */
-                var active;
+                this.active;
                 this.children = 0;
                 this.parent;
                 this.name;
                 this.type = "sensor";
 
-                this.getName = function() {
-                    return !this.name ? this.id : this.name;
-                };
-
-                this.setParent = function(parent) {
-                    this.parent = parent;
-                };
-
-                this.getWidget = function() {
-                    return '<div id="' + this.id + '" class="device">\
-                            <div class="type">' + this.type + '</div>\
-                            <div class="name">' + this.getName() + '</div>\
-                            <div class="child">' + this.value + '</div>\
-                        </div>';
-                };
             };
-
+            function getName(device) {
+                return !device.name ? device.id : device.name;
+            }
+            function getWidget(device) {
+                var str = getName(device);
+                if (device.type === "device") {
+                    str = '<input type="button" value="' + getName(device) + '">';
+                }
+                return '<div id="' + device.id + '" class="device">\
+                            <div class="type">' + device.type + '</div>\
+                            <div class="name">' + str + '</div>\
+                            <div class="child">' + device.value + '</div>\
+                        </div>';
+            }
             function init() {
-                var b = new Device(1, true);
+                var b = new Device("artificial", true);
                 store[b.id] = b;
                 b.type = "device";
                 c = new Device(2, true);
                 console.log(store[b.id]);
 
-
                 d = [b, c];
+//                localStorage["d"] = JSON.stringify(d);
+                if (!d)
+                    d = JSON.parse(localStorage["d"]);
                 d.forEach(draw);
-                
-                document.getElementById("Physical").className = "input:active";
+
+                document.getElementById("Physical").style = "border-style:inset;";
             }
 
         </script>
