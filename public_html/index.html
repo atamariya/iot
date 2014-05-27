@@ -9,6 +9,7 @@ and open the template in the editor.
         <title>mHome</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script type="text/javascript" src="js/require.js"></script>
         <script src="js/mqttws31.js"></script>
         <script src="js/script.js"></script>
         <script>
@@ -32,7 +33,9 @@ and open the template in the editor.
             function getWidget(device) {
                 var str = getName(device);
                 if (device.type === "device") {
-                    str = '<input type="button" value="' + getName(device) + '">';
+                    str = '<input type="button" value="' + getName(device)
+                            + '" onclick="publish(\'' + device.id + '\',' + (device.value ? 0 : 1)
+                            + ')" >';
                 }
                 return '<div id="' + device.id + '" class="device">\
                             <div class="type">' + device.type + '</div>\
@@ -56,6 +59,40 @@ and open the template in the editor.
                 document.getElementById("Physical").style = "border-style:inset;";
             }
 
+            function publish(topic, data) {
+                var msg = new Messaging.Message(data.toString());
+                msg.destinationName = topic;
+                client.send(msg);
+            }
+
+            require(['js/nools'], function(nools) {
+                //foo is now loaded.
+
+                var Message = function(message) {
+                    this.text = message;
+                };
+
+                var flow = nools.flow("Hello World", function(flow) {
+
+                    //find any message that start with hello
+                    flow.rule("Hello", [Message, "m", "m.text =~ /^hello(\\s*world)?$/"], function(facts) {
+                        facts.m.text = facts.m.text + " goodbye";
+                        this.modify(facts.m);
+                    });
+
+                    //find all messages then end in goodbye
+                    flow.rule("Goodbye", [Message, "m", "m.text =~ /.*goodbye$/"], function(facts) {
+                        console.log(facts.m.text);
+                    });
+                });
+                var session = flow.getSession();
+                //assert your different messages
+                session.assert(new Message("goodbye"));
+                session.assert(new Message("hello"));
+                session.assert(new Message("hello world"));
+                session.match();
+                console.log(session.getFacts());
+            });
         </script>
         <link rel="stylesheet" type="text/css" href="main.css"/>
         <style>
