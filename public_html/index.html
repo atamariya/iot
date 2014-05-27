@@ -13,7 +13,7 @@ and open the template in the editor.
         <script src="js/mqttws31.js"></script>
         <script src="js/script.js"></script>
         <script>
-            var Device = function(id, physicalDevice) {
+            var Device = function(id, physicalDevice, type) {
                 this.id = id;
                 this.physical = physicalDevice;
 
@@ -24,7 +24,7 @@ and open the template in the editor.
                 this.children = 0;
                 this.parent;
                 this.name;
-                this.type = "sensor";
+                this.type = type;
 
             };
             function getName(device) {
@@ -34,7 +34,7 @@ and open the template in the editor.
                 var str = getName(device);
                 if (device.type === "device") {
                     str = '<input type="button" value="' + getName(device)
-                            + '" onclick="publish(\'' + device.id + '\',' + (device.value ? 0 : 1)
+                            + '" onclick="publish(\'' + device.id + '\',' + (device.value == "1" ? 0 : 1)
                             + ')" >';
                 }
                 return '<div id="' + device.id + '" class="device">\
@@ -66,8 +66,6 @@ and open the template in the editor.
             }
 
             require(['js/nools'], function(nools) {
-                //foo is now loaded.
-
                 var Message = function(message) {
                     this.text = message;
                 };
@@ -91,7 +89,7 @@ and open the template in the editor.
                 session.assert(new Message("hello"));
                 session.assert(new Message("hello world"));
                 session.match();
-                console.log(session.getFacts());
+//                console.log(session.getFacts());
             });
         </script>
         <link rel="stylesheet" type="text/css" href="main.css"/>

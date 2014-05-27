@@ -5,7 +5,7 @@
  */
 var d;
 var store = window.localStorage;
-var refreshInterval = 500; //ms
+var refreshInterval = 1000; //ms
 function resolveHierarchy(device) {
     var parent = null;
     var parts = device.id.split("/");
@@ -18,17 +18,17 @@ function resolveHierarchy(device) {
         device.parent = parent;
         device = parent;
     }
-    if (d.indexOf(parent) > 0) {
-        parent = d[devices.indexOf(device)];
-        parent.children.addAll(device.children);
-        device = parent;
-    } else
-        d.push(device);
+//    if (d[device.id]) {
+//        parent = d[device.id];
+//        parent.children.addAll(device.children);
+//        device = parent;
+//    } else
+    d[device.id] = device;
 }
 
 var connected = false;
 var client = new Messaging.Client("localhost", 8000,
-        "mHome");
+        "mHome" + Math.random());
 
 client.onConnectionLost = function(responseObject) {
     console.log("connection lost: " + responseObject.errorMessage);
@@ -36,7 +36,7 @@ client.onConnectionLost = function(responseObject) {
 };
 
 client.onMessageArrived = function(message) {
-    var device = new Device(message.destinationName);
+    var device = new Device(message.destinationName, true, "device");
     device.value = message.payloadString;
 
     resolveHierarchy(device);
@@ -45,7 +45,7 @@ client.onMessageArrived = function(message) {
 };
 
 var options = {
-    timeout: 10, //seconds
+    timeout: 60, //seconds
     onSuccess: function() {
         console.log("Connected");
         connected = true;
@@ -57,12 +57,17 @@ var options = {
     }
 };
 
+client.connect(options);
 window.setInterval(function() {
     if (!connected) {
-        console.log("reconnect");
+//        console.log("reconnect");
         client.connect(options);
     }
 }, refreshInterval);
+
+onunload = function() {
+    client.disconnect();
+};
 
 function draw(device) {
     var node = document.getElementById(device.id);
@@ -76,4 +81,3 @@ function draw(device) {
     var parent = document.getElementById("devices");
     parent.appendChild(node);
 }
-;

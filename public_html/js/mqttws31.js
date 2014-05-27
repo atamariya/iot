@@ -1657,7 +1657,7 @@ Messaging = (function (global) {
 					throw new Error(format(ERROR.INVALID_TYPE, [typeof connectOptions.willMessage.destinationName, "connectOptions.willMessage.destinationName"]));
 			}
 			if (typeof connectOptions.cleanSession === "undefined")
-				connectOptions.cleanSession = true;
+				connectOptions.cleanSession = false;
 			if (connectOptions.hosts) {
 			    
 				if (!(connectOptions.hosts instanceof Array) )
