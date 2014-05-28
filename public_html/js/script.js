@@ -1,34 +1,7 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-var d;
-var store = window.localStorage;
 var refreshInterval = 1000; //ms
-function resolveHierarchy(device) {
-    var parent = null;
-    var parts = device.id.split("/");
-    if (parts.length < 1)
-        return;
-
-    for (i = parts.length - 1; i > 0; i--) {
-        var id = parts[--i];
-        parent = new Device(id);
-        device.parent = parent;
-        device = parent;
-    }
-//    if (d[device.id]) {
-//        parent = d[device.id];
-//        parent.children.addAll(device.children);
-//        device = parent;
-//    } else
-    d[device.id] = device;
-}
-
 var connected = false;
 var client = new Messaging.Client("localhost", 8000,
-        "mHome" + Math.random());
+        "mHome" + String(Math.random() * 1000));
 
 client.onConnectionLost = function(responseObject) {
     console.log("connection lost: " + responseObject.errorMessage);
@@ -36,7 +9,7 @@ client.onConnectionLost = function(responseObject) {
 };
 
 client.onMessageArrived = function(message) {
-    var device = new Device(message.destinationName, true, "device");
+    var device = new Device(message.destinationName, true);
     device.value = message.payloadString;
 
     resolveHierarchy(device);
@@ -80,4 +53,28 @@ function draw(device) {
     node.innerHTML = getWidget(device);
     var parent = document.getElementById("devices");
     parent.appendChild(node);
+}
+
+var d = new Object();
+
+function resolveHierarchy(device) {
+    var parent = null;
+    var parts = device.id.split("/");
+    if (parts.length < 1)
+        return;
+    device.type = "sensor";
+    if (parts[0] == "ctrl")
+        device.type = "control";
+    for (i = parts.length - 1; i > 0; i--) {
+        var id = parts[--i];
+        parent = new Device(id, false, device.type);
+        parent.children.push(device);
+        device = parent;
+    }
+//    if (d[device.id]) {
+//        parent = d[device.id];
+//        parent.children.addAll(device.children);
+//        device = parent;
+//    } else
+    d[device.id] = device;
 }
