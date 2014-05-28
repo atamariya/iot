@@ -21,21 +21,22 @@ and open the template in the editor.
                 this.value = this.min = this.max = 0;
                 /** If it's a physical device, children are not modifiable. */
                 this.active;
-                this.children = 0;
+                this.children = new Array();
                 this.parent;
                 this.name;
                 this.type = type;
 
             };
             function getName(device) {
-                return !device.name ? device.id : device.name;
+                var str = (!device.name ? device.id : device.name);
+                return str.substring(0, 20);
             }
             function getWidget(device) {
                 var str = getName(device);
-                if (device.type === "device") {
+                if (device.type === "control") {
                     str = '<input type="button" value="' + getName(device)
-                            + '" onclick="publish(\'' + device.id + '\',' + (device.value == "1" ? 0 : 1)
-                            + ')" >';
+                            + '" onclick="publish(\'' + device.id
+                            + '\')" >';
                 }
                 return '<div id="' + device.id + '" class="device">\
                             <div class="type">' + device.type + '</div>\
@@ -44,25 +45,30 @@ and open the template in the editor.
                         </div>';
             }
             function init() {
-                var b = new Device("artificial", true);
-                store[b.id] = b;
-                b.type = "device";
-                c = new Device(2, true);
-                console.log(store[b.id]);
-
-                d = [b, c];
+                var b = new Device("ctrl/artificial", true);
+                resolveHierarchy(b);
 //                localStorage["d"] = JSON.stringify(d);
                 if (!d)
                     d = JSON.parse(localStorage["d"]);
-                d.forEach(draw);
+                for (var k in d)
+                    draw(d[k]);
 
                 document.getElementById("Physical").style = "border-style:inset;";
             }
 
-            function publish(topic, data) {
-                var msg = new Messaging.Message(data.toString());
-                msg.destinationName = topic;
+            function publish(id) {
+                var device = d[id];
+                if (device)
+                    execute(device);
+            }
+
+            function execute(device) {
+                var msg = new Messaging.Message(String(device.value));
+                msg.destinationName = device.id;
                 client.send(msg);
+
+                device.children.forEach(
+                        execute);
             }
 
             require(['js/nools'], function(nools) {

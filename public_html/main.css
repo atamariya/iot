@@ -63,6 +63,9 @@ li {
     width: 70%;
     float: left;
 }
+.device input {
+    width: 10em;
+}
 
 /* Default styles first then media queries */
 @media screen and (min-width: 400px)  {}

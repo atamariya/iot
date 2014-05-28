@@ -44,15 +44,18 @@ onunload = function() {
 
 function draw(device) {
     var node = document.getElementById(device.id);
-    if (node)
+    var replace = false;
+    if (node) {
         node = node.parentNode;
-    else
+        replace = true;
+    } else
         node = document.createElement("li");
 
     console.log(device);
     node.innerHTML = getWidget(device);
     var parent = document.getElementById("devices");
-    parent.appendChild(node);
+    if (!replace)
+        parent.appendChild(node);
 }
 
 var d = new Object();
