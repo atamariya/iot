@@ -1,15 +1,11 @@
-/*
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
-*/
 /* 
     Created on : May 23, 2014, 4:04:07 PM
     Author     : Anand.Tamariya
 */
 body {
-    //width: 310px;
-    //font-family: monospace;
+    padding: 0;
+    margin: 0;
+    overflow:hidden;
 }
 div {
     border: 1px solid;
@@ -44,6 +40,10 @@ li {
     text-align: center;
 }
 
+#main {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
 .device {
     border-radius: 0;
     margin: 5px;
@@ -67,7 +67,34 @@ li {
     width: 10em;
 }
 
+#dialog {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: gray;
+    opacity:0.4;
+    z-index: 10;
+    border-radius: 0;
+    text-align: center;
+    overflow: hidden ;
+}
+
+#dialog div {
+    background: blue;
+    position: fixed;
+    top: 30%;
+    left: 30%;
+    transform: rotate(90deg);
+    -ms-transform:rotate(90deg); /* IE 9 */
+    -webkit-transform:rotate(90deg); /* Opera, Chrome, and Safari */
+}
+
 /* Default styles first then media queries */
-@media screen and (min-width: 400px)  {}
-@media screen and (min-width: 600px)  {}
+@media screen and (min-width: 480px)  {
+    #dialog div {
+        transform: rotate(0deg);
+        -ms-transform:rotate(0deg); /* IE 9 */
+    }
+}
 

@@ -45,7 +45,8 @@ and open the template in the editor.
                         </div>';
             }
             function init() {
-                var b = new Device("ctrl/artificial", true);
+
+                var b = new Device("ctrl/ar/ti/fi/ci/al", true);
                 resolveHierarchy(b);
 //                localStorage["d"] = JSON.stringify(d);
                 if (!d)
@@ -53,7 +54,8 @@ and open the template in the editor.
                 for (var k in d)
                     draw(d[k]);
 
-                document.getElementById("Physical").style = "border-style:inset;";
+                document.getElementById("Physical").style.border = "inset";
+                document.getElementById("dialog").style.display = "none";
             }
 
             function publish(id) {
@@ -97,12 +99,14 @@ and open the template in the editor.
                 session.match();
 //                console.log(session.getFacts());
             });
+
+            onload = init;
         </script>
         <link rel="stylesheet" type="text/css" href="main.css"/>
         <style>
         </style>
     </head>
-    <body onload="init();">
+    <body>
         <div>
             <div id="toolbar">
                 <input type="button" value="Refresh">
@@ -125,6 +129,11 @@ and open the template in the editor.
                     </li-->
 
                 </ul>
+            </div>
+        </div>
+        <div id="dialog">
+            <div>
+                <input type="range" name="points" min="1" max="10">
             </div>
         </div>
     </body>

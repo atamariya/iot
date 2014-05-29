@@ -12,7 +12,7 @@ client.onMessageArrived = function(message) {
     var device = new Device(message.destinationName, true);
     device.value = message.payloadString;
 
-    resolveHierarchy(device);
+    device = resolveHierarchy(device);
     draw(device);
     console.log(message.destinationName + " " + message.payloadString);
 };
@@ -31,15 +31,10 @@ var options = {
 };
 
 client.connect(options);
-window.setInterval(function() {
-    if (!connected) {
-//        console.log("reconnect");
-        client.connect(options);
-    }
-}, refreshInterval);
 
 onunload = function() {
-    client.disconnect();
+    if (connected)
+        client.disconnect();
 };
 
 function draw(device) {
@@ -61,6 +56,12 @@ function draw(device) {
 var d = new Object();
 
 function resolveHierarchy(device) {
+    if (d[device.id]) {
+        // Update device state using info. from arrived msg.
+        d[device.id].value = device.value;
+        return d[device.id];
+    }
+
     var parent = null;
     var parts = device.id.split("/");
     if (parts.length < 1)
@@ -68,16 +69,14 @@ function resolveHierarchy(device) {
     device.type = "sensor";
     if (parts[0] == "ctrl")
         device.type = "control";
+    d[device.id] = device;
+
     for (i = parts.length - 1; i > 0; i--) {
         var id = parts[--i];
         parent = new Device(id, false, device.type);
         parent.children.push(device);
         device = parent;
+        d[device.id] = device;
     }
-//    if (d[device.id]) {
-//        parent = d[device.id];
-//        parent.children.addAll(device.children);
-//        device = parent;
-//    } else
-    d[device.id] = device;
+    return device;
 }
