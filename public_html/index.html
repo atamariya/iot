@@ -15,11 +15,12 @@ and open the template in the editor.
         <script>
             var Device = function(id, physicalDevice, type) {
                 this.id = id;
+                /** If it's a physical device, children are not modifiable. */
                 this.physical = physicalDevice;
 
-                /** Controls can have range of values unlike switch. */
+                /** Controls can have range of values unlike switch. max = 1 is 
+                 * switch. max > 1 is a control. */
                 this.value = this.min = this.max = 0;
-                /** If it's a physical device, children are not modifiable. */
                 this.active;
                 this.children = new Array();
                 this.parent;
@@ -45,11 +46,10 @@ and open the template in the editor.
                         </div>';
             }
             function init() {
-                var b = new Device("ctrl/ar/ti/fi/ci/al", true);
+                var b = new Device("ctrl/ar/ti/fi/ci/al", false);
                 b.max = 15;
 
                 resolveHierarchy(b);
-//                localStorage["d"] = JSON.stringify(d);
                 if (!d)
                     d = JSON.parse(localStorage["d"]);
                 for (var k in d)
@@ -73,13 +73,18 @@ and open the template in the editor.
             }
 
             function execute(device) {
+                console.log("Executing for " + device.id);
+                draw(device);
                 if (device.physical) {
                     var msg = new Messaging.Message(String(device.value));
                     msg.destinationName = device.id;
                     client.send(msg);
                 } else {
-                    device.children.forEach(
-                            execute);
+                    // Logical switches act on complete heirarchy
+                    device.children.forEach(function(child) {
+                        child.value = device.value;
+                        execute(child)
+                    });
                 }
             }
 

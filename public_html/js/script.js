@@ -39,6 +39,7 @@ client.connect(options);
 onunload = function() {
     if (connected)
         client.disconnect();
+//                localStorage["d"] = JSON.stringify(d);
 };
 
 function draw(device) {
@@ -79,9 +80,10 @@ function resolveHierarchy(device) {
     }
     d[device.id] = device;
 
-    for (i = parts.length - 1; i > 0;) {
+    for (i = parts.length - 1; i > 0; ) {
         var id = parts[--i];
         parent = new Device(id, false, device.type);
+        parent.max = device.max;
         parent.children.push(device);
         device = parent;
         d[device.id] = device;
