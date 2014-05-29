@@ -33,7 +33,7 @@ and open the template in the editor.
             }
             function getWidget(device) {
                 var str = getName(device);
-                if (device.type === "control") {
+                if (device.type != "sensor") {
                     str = '<input type="button" value="' + getName(device)
                             + '" onclick="publish(\'' + device.id
                             + '\')" >';
@@ -45,8 +45,9 @@ and open the template in the editor.
                         </div>';
             }
             function init() {
-
                 var b = new Device("ctrl/ar/ti/fi/ci/al", true);
+                b.max = 15;
+
                 resolveHierarchy(b);
 //                localStorage["d"] = JSON.stringify(d);
                 if (!d)
@@ -54,25 +55,57 @@ and open the template in the editor.
                 for (var k in d)
                     draw(d[k]);
 
-                document.getElementById("Physical").style.border = "inset";
-                document.getElementById("dialog").style.display = "none";
+                $("Physical").style.border = "inset";
+                $("dialog").style.display = "none";
             }
 
             function publish(id) {
                 var device = d[id];
-                if (device)
+                if (!device || device.type == "sensor")
+                    return;
+
+                if (device.type == "control")
+                    getValue(device, execute);
+                else {
+                    device.value = (device.value == "1" ? "0" : "1");
                     execute(device);
+                }
             }
 
             function execute(device) {
-                var msg = new Messaging.Message(String(device.value));
-                msg.destinationName = device.id;
-                client.send(msg);
-
-                device.children.forEach(
-                        execute);
+                if (device.physical) {
+                    var msg = new Messaging.Message(String(device.value));
+                    msg.destinationName = device.id;
+                    client.send(msg);
+                } else {
+                    device.children.forEach(
+                            execute);
+                }
             }
 
+            function getValue(device, callback) {
+                // Show pop-up with slider
+                $("dialog").style.display = "block";
+                $("dialog").onclick = function() {
+                    $("dialog").style.display = "none";
+                    // Don't make unnecessary calls
+                    if (device.value != $("points").value) {
+                        device.value = $("points").value;
+                        callback(device);
+                    }
+                };
+                var points = $("points");
+                points.min = device.min;
+                points.max = device.max;
+            }
+
+            function applyFilter(filter) {
+                $("devices").innerHTML = "";
+                for (var k in d) {
+                    if (d[k].type == filter)
+                        draw(d[k]);
+                }
+            }
             require(['js/nools'], function(nools) {
                 var Message = function(message) {
                     this.text = message;
@@ -133,7 +166,7 @@ and open the template in the editor.
         </div>
         <div id="dialog">
             <div>
-                <input type="range" name="points" min="1" max="10">
+                <input type="range" id="points" min="1" max="10">
             </div>
         </div>
     </body>

@@ -85,9 +85,9 @@ li {
     position: fixed;
     top: 30%;
     left: 30%;
-    transform: rotate(90deg);
-    -ms-transform:rotate(90deg); /* IE 9 */
-    -webkit-transform:rotate(90deg); /* Opera, Chrome, and Safari */
+    transform: rotate(-90deg);
+    -ms-transform:rotate(-90deg); /* IE 9 */
+    -webkit-transform:rotate(-90deg); /* Opera, Chrome, and Safari */
 }
 
 /* Default styles first then media queries */

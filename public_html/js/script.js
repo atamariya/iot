@@ -1,3 +1,7 @@
+var $ = function(id) {
+    return document.getElementById(id);
+};
+
 var refreshInterval = 1000; //ms
 var connected = false;
 var client = new Messaging.Client("localhost", 8000,
@@ -38,7 +42,7 @@ onunload = function() {
 };
 
 function draw(device) {
-    var node = document.getElementById(device.id);
+    var node = $(device.id);
     var replace = false;
     if (node) {
         node = node.parentNode;
@@ -48,7 +52,7 @@ function draw(device) {
 
     console.log(device);
     node.innerHTML = getWidget(device);
-    var parent = document.getElementById("devices");
+    var parent = $("devices");
     if (!replace)
         parent.appendChild(node);
 }
@@ -67,11 +71,15 @@ function resolveHierarchy(device) {
     if (parts.length < 1)
         return;
     device.type = "sensor";
-    if (parts[0] == "ctrl")
-        device.type = "control";
+    if (parts[0] == "ctrl") {
+        if (device.max > 1)
+            device.type = "control";
+        else
+            device.type = "switch";
+    }
     d[device.id] = device;
 
-    for (i = parts.length - 1; i > 0; i--) {
+    for (i = parts.length - 1; i > 0;) {
         var id = parts[--i];
         parent = new Device(id, false, device.type);
         parent.children.push(device);
