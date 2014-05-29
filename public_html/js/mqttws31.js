@@ -242,6 +242,7 @@ Messaging = (function (global) {
 	 */
 	var WireMessage = function (type, options) { 	
 		this.type = type;
+                this.topics = new Array();
 		for(name in options) {
 			if (options.hasOwnProperty(name)) {
 				this[name] = options[name];
@@ -827,7 +828,10 @@ Messaging = (function (global) {
 			throw new Error(format(ERROR.INVALID_STATE, ["not connected"]));
 		
 		var wireMessage = new WireMessage(MESSAGE_TYPE.SUBSCRIBE);
-		wireMessage.topics=[filter];
+                if (filter instanceof Array)
+                    wireMessage.topics = filter;
+                else
+                    wireMessage.topics.push(filter);
 		if (subscribeOptions.qos != undefined)
 			wireMessage.requestedQos = [subscribeOptions.qos];
 		else 
