@@ -13,38 +13,7 @@ and open the template in the editor.
         <script src="js/mqttws31.js"></script>
         <script src="js/script.js"></script>
         <script>
-            var Device = function(id, physicalDevice, type) {
-                this.id = id;
-                /** If it's a physical device, children are not modifiable. */
-                this.physical = physicalDevice;
 
-                /** Controls can have range of values unlike switch. max = 1 is 
-                 * switch. max > 1 is a control. */
-                this.value = this.min = this.max = 0;
-                this.active;
-                this.children = new Array();
-                this.parent;
-                this.name;
-                this.type = type;
-
-            };
-            function getName(device) {
-                var str = (!device.name ? device.id : device.name);
-                return str.substring(0, 20);
-            }
-            function getWidget(device) {
-                var str = getName(device);
-                if (device.type != "sensor") {
-                    str = '<input type="button" value="' + getName(device)
-                            + '" onclick="publish(\'' + device.id
-                            + '\')" >';
-                }
-                return '<div id="' + device.id + '" class="device">\
-                            <div class="type">' + device.type + '</div>\
-                            <div class="name">' + str + '</div>\
-                            <div class="child">' + device.value + '</div>\
-                        </div>';
-            }
             function init() {
                 var b = new Device("ctrl/ar/ti/fi/ci/al", false);
                 b.max = 15;
@@ -59,34 +28,6 @@ and open the template in the editor.
                 $("dialog").style.display = "none";
             }
 
-            function publish(id) {
-                var device = d[id];
-                if (!device || device.type == "sensor")
-                    return;
-
-                if (device.type == "control")
-                    getValue(device, execute);
-                else {
-                    device.value = (device.value == "1" ? "0" : "1");
-                    execute(device);
-                }
-            }
-
-            function execute(device) {
-                console.log("Executing for " + device.id);
-                draw(device);
-                if (device.physical) {
-                    var msg = new Messaging.Message(String(device.value));
-                    msg.destinationName = device.id;
-                    client.send(msg);
-                } else {
-                    // Logical switches act on complete heirarchy
-                    device.children.forEach(function(child) {
-                        child.value = device.value;
-                        execute(child)
-                    });
-                }
-            }
 
             function getValue(device, callback) {
                 // Show pop-up with slider
@@ -111,32 +52,6 @@ and open the template in the editor.
                         draw(d[k]);
                 }
             }
-            require(['js/nools'], function(nools) {
-                var Message = function(message) {
-                    this.text = message;
-                };
-
-                var flow = nools.flow("Hello World", function(flow) {
-
-                    //find any message that start with hello
-                    flow.rule("Hello", [Message, "m", "m.text =~ /^hello(\\s*world)?$/"], function(facts) {
-                        facts.m.text = facts.m.text + " goodbye";
-                        this.modify(facts.m);
-                    });
-
-                    //find all messages then end in goodbye
-                    flow.rule("Goodbye", [Message, "m", "m.text =~ /.*goodbye$/"], function(facts) {
-                        console.log(facts.m.text);
-                    });
-                });
-                var session = flow.getSession();
-                //assert your different messages
-                session.assert(new Message("goodbye"));
-                session.assert(new Message("hello"));
-                session.assert(new Message("hello world"));
-                session.match();
-//                console.log(session.getFacts());
-            });
 
             onload = init;
         </script>

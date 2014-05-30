@@ -42,6 +42,41 @@ onunload = function() {
 //                localStorage["d"] = JSON.stringify(d);
 };
 
+var d = new Object();
+
+var Device = function(id, physicalDevice, type) {
+    this.id = id;
+    /** If it's a physical device, children are not modifiable. */
+    this.physical = physicalDevice;
+
+    /** Controls can have range of values unlike switch. max = 1 is 
+     * switch. max > 1 is a control. */
+    this.value = this.min = this.max = 0;
+    this.active;
+    this.children = new Array();
+    this.parent;
+    this.name;
+    this.type = type;
+
+};
+function getName(device) {
+    var str = (!device.name ? device.id : device.name);
+    return str.substring(0, 20);
+}
+function getWidget(device) {
+    var str = getName(device);
+    if (device.type != "sensor") {
+        str = '<input type="button" value="' + getName(device)
+                + '" onclick="publish(\'' + device.id
+                + '\')" >';
+    }
+    return '<div id="' + device.id + '" class="device">\
+                            <div class="type">' + device.type + '</div>\
+                            <div class="name">' + str + '</div>\
+                            <div class="child">' + device.value + '</div>\
+                        </div>';
+}
+
 function draw(device) {
     var node = $(device.id);
     var replace = false;
@@ -57,8 +92,6 @@ function draw(device) {
     if (!replace)
         parent.appendChild(node);
 }
-
-var d = new Object();
 
 function resolveHierarchy(device) {
     if (d[device.id]) {
@@ -89,4 +122,33 @@ function resolveHierarchy(device) {
         d[device.id] = device;
     }
     return device;
+}
+
+function publish(id) {
+    var device = d[id];
+    if (!device || device.type == "sensor")
+        return;
+
+    if (device.type == "control")
+        getValue(device, execute);
+    else {
+        device.value = (device.value == "1" ? "0" : "1");
+        execute(device);
+    }
+}
+
+function execute(device) {
+    console.log("Executing for " + device.id);
+    draw(device);
+    if (device.physical) {
+        var msg = new Messaging.Message(String(device.value));
+        msg.destinationName = device.id;
+        client.send(msg);
+    } else {
+        // Logical switches act on complete heirarchy
+        device.children.forEach(function(child) {
+            child.value = device.value;
+            execute(child)
+        });
+    }
 }
