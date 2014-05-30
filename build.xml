@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="mqtt" default="default" basedir=".">
+    <description>Builds, tests, and runs the project mqtt.</description>
+   
+    <target name="default">
+	<javac srcdir="src"
+	    destdir="bin"
+	    classpath="lib/jssc.jar"
+	    debug="on"
+	    source="1.7"
+	    />
+
+    </target>
+</project>
+
