@@ -26,6 +26,7 @@ and open the template in the editor.
 
                 $("Physical").style.border = "inset";
                 $("dialog").style.display = "none";
+                $("Refresh").onclick = function() {connect();};
             }
 
 
@@ -62,7 +63,7 @@ and open the template in the editor.
     <body>
         <div>
             <div id="toolbar">
-                <input type="button" value="Refresh">
+                <input type="button" value="Refresh" id="Refresh">
                 <input type="button" value="Add">
             </div>
             <div id="tabs">

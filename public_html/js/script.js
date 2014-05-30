@@ -13,11 +13,7 @@ client.onConnectionLost = function(responseObject) {
 };
 
 client.onMessageArrived = function(message) {
-    var device = new Device(message.destinationName, true);
-    device.value = message.payloadString;
-
-    device = resolveHierarchy(device);
-    draw(device);
+    processMessage(message);
     console.log(message.destinationName + " " + message.payloadString);
 };
 
@@ -34,13 +30,19 @@ var options = {
     }
 };
 
-client.connect(options);
-
-onunload = function() {
+function connect() {
+    disconnect();
+    client.connect(options);
+}
+function disconnect() {
     if (connected)
         client.disconnect();
 //                localStorage["d"] = JSON.stringify(d);
-};
+}
+;
+connect();
+
+onunload = disconnect;
 
 var d = new Object();
 
@@ -91,6 +93,14 @@ function draw(device) {
     var parent = $("devices");
     if (!replace)
         parent.appendChild(node);
+}
+
+function processMessage(message) {
+    var device = new Device(message.destinationName, true);
+    device.value = message.payloadString;
+
+    device = resolveHierarchy(device);
+    draw(device);
 }
 
 function resolveHierarchy(device) {
