@@ -54,7 +54,7 @@ var Device = function(id, physicalDevice, type) {
     /** Controls can have range of values unlike switch. max = 1 is 
      * switch. max > 1 is a control. */
     this.value = this.min = this.max = 0;
-    this.active;
+    this.active = true;
     this.children = new Array();
     this.parent;
     this.name;
@@ -70,13 +70,18 @@ function getWidget(device) {
     if (device.type != "sensor") {
         str = '<input type="button" value="' + getName(device)
                 + '" onclick="publish(\'' + device.id
-                + '\')" >';
+                + '\')"' + (device.active ? '' : 'disabled') + '>';
     }
     return '<div id="' + device.id + '" class="device">\
                             <div class="type">' + device.type + '</div>\
                             <div class="name">' + str + '</div>\
                             <div class="child">' + device.value + '</div>\
                         </div>';
+}
+
+function refresh() {
+    connect();
+    redraw();
 }
 
 function draw(device) {
@@ -114,8 +119,8 @@ function processMessage(message) {
     var device = new Device(id, true);
     if (type == "meta") {
         if (!value) {
-            delete d[id];
-            redraw();
+            device = resolveHierarchy(device);
+            deactivate(device);
             return;
         } else {
             // payload is an object representing device meta info
@@ -131,10 +136,20 @@ function processMessage(message) {
     draw(device);
 }
 
+function findChild(device) {
+    for (var key in d) {
+        if (key.match(device.id)) {
+            device.children.push(d[key]);
+        }
+    }
+}
+
 function resolveHierarchy(device) {
+    findChild(device);
     if (d[device.id]) {
         // Update device state using info. from arrived msg.
         d[device.id].value = device.value;
+        d[device.id].active = device.active;
         return d[device.id];
     }
 
@@ -173,6 +188,15 @@ function publish(id) {
         device.value = (device.value == "1" ? "0" : "1");
         execute(device);
     }
+}
+
+function deactivate(device) {
+    device.active = false;
+    draw(device);
+    if (device.children == 0) {
+        return;
+    }
+    device.children.forEach(deactivate);
 }
 
 function execute(device) {
