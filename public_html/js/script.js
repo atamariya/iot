@@ -95,6 +95,15 @@ function draw(device) {
         parent.appendChild(node);
 }
 
+function redraw() {
+    var elm = $("devices");
+    while (elm.firstChild) {
+        elm.removeChild(elm.firstChild);
+    }
+    for (var k in d)
+        draw(d[k]);
+}
+
 function processMessage(message) {
     var id = message.destinationName;
     var value = message.payloadString;
@@ -104,10 +113,16 @@ function processMessage(message) {
     id = id.substring(5);
     var device = new Device(id, true);
     if (type == "meta") {
-        // payload is an object representing device meta info
-        device.type = value.type;
-        device.max = value.max;
-        device = resolveHierarchy(device);
+        if (!value) {
+            delete d[id];
+            redraw();
+            return;
+        } else {
+            // payload is an object representing device meta info
+            device.type = value.type;
+            device.max = value.max;
+            device = resolveHierarchy(device);
+        }
     } else if (type == "stat")
         device.value = value;
     else

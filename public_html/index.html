@@ -21,12 +21,13 @@ and open the template in the editor.
                 resolveHierarchy(b);
                 if (!d)
                     d = JSON.parse(localStorage["d"]);
-                for (var k in d)
-                    draw(d[k]);
+                redraw();
 
                 $("Physical").style.border = "inset";
                 $("dialog").style.display = "none";
-                $("Refresh").onclick = function() {connect();};
+                $("Refresh").onclick = function() {
+                    connect();
+                };
             }
 
 
