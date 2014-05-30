@@ -57,8 +57,17 @@ and open the template in the editor.
 
                 $("Physical").style.border = "inset";
                 $("dialog").style.display = "none";
+                $("settings").style.display = "none";
+                $("slider").style.display = "none";
+                $("bSettings").onclick = settingsDialog;
             }
 
+            function settingsDialog() {
+                $("dialog").style.display = "block";
+                $("settings").style.display = "block";
+                $("dialog").appendChild($("settings"));
+            }
+            
             function publish(id) {
                 var device = d[id];
                 if (!device || device.type == "sensor")
@@ -90,7 +99,9 @@ and open the template in the editor.
 
             function getValue(device, callback) {
                 // Show pop-up with slider
+                $("dialog").appendChild($("points"));
                 $("dialog").style.display = "block";
+                $("points").style.display = "block";
                 $("dialog").onclick = function() {
                     $("dialog").style.display = "none";
                     // Don't make unnecessary calls
@@ -149,6 +160,7 @@ and open the template in the editor.
             <div id="toolbar">
                 <input type="button" value="Refresh">
                 <input type="button" value="Add">
+                <input type="button" value="Settings" id="bSettings">
             </div>
             <div id="tabs">
                 <input type="button" value="Physical" id="Physical">
@@ -170,9 +182,23 @@ and open the template in the editor.
             </div>
         </div>
         <div id="dialog">
-            <div>
-                <input type="range" id="points" min="1" max="10">
-            </div>
         </div>
+        <div id="slider">
+            <input type="range" id="points" min="1" max="10">
+        </div>
+        <div id="settings">
+            Broker
+            <form name="s">
+                <table>
+                    <tr><td>
+                            URL</td><td> <input name="host"></td></tr>
+                    <tr><td>
+                            Port</td><td> <input name="port"></td></tr>
+                    <tr><td colspan="2">
+                            <input type="submit" name="OK"></td></tr>
+                </table>
+            </form>
+        </div>
+
     </body>
 </html>
