@@ -96,10 +96,23 @@ function draw(device) {
 }
 
 function processMessage(message) {
-    var device = new Device(message.destinationName, true);
-    device.value = message.payloadString;
+    var id = message.destinationName;
+    var value = message.payloadString;
 
-    device = resolveHierarchy(device);
+    // First part is topic type
+    var type = id.substring(0, 4);
+    id = id.substring(5);
+    var device = new Device(id, true);
+    if (type == "meta") {
+        // payload is an object representing device meta info
+        device.type = value.type;
+        device.max = value.max;
+        device = resolveHierarchy(device);
+    } else if (type == "stat")
+        device.value = value;
+    else
+        return;
+
     draw(device);
 }
 
@@ -114,16 +127,16 @@ function resolveHierarchy(device) {
     var parts = device.id.split("/");
     if (parts.length < 1)
         return;
-    device.type = "sensor";
-    if (parts[0] == "ctrl") {
-        if (device.max > 1)
-            device.type = "control";
-        else
-            device.type = "switch";
-    }
+
+    if (device.max > 1)
+        device.type = "control";
+    else if (device.max = 1)
+        device.type = "switch";
+    else
+        device.type = "sensor";
     d[device.id] = device;
 
-    for (i = parts.length - 1; i > 0; ) {
+    for (i = parts.length - 1; i > 1 /* don't use first part of topic */; ) {
         var id = parts[--i];
         parent = new Device(id, false, device.type);
         parent.max = device.max;
@@ -152,7 +165,7 @@ function execute(device) {
     draw(device);
     if (device.physical) {
         var msg = new Messaging.Message(String(device.value));
-        msg.destinationName = device.id;
+        msg.destinationName = "ctrl/" + device.id;
         client.send(msg);
     } else {
         // Logical switches act on complete heirarchy
