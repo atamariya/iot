@@ -31,8 +31,8 @@ var options = {
 };
 
 function connect() {
-    disconnect();
-    client.connect(options);
+    if(!connected)
+        client.connect(options);
 }
 function disconnect() {
     if (connected)
@@ -182,6 +182,8 @@ function publish(id) {
     if (!device || device.type == "sensor")
         return;
 
+    connect(); // Ensure we're connected
+    
     if (device.type == "control")
         getValue(device, execute);
     else {
