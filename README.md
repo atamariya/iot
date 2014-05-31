@@ -7,7 +7,7 @@ The framework consists of the following:
 
     Lightweight HTML5 client with only MQTT JS library dependency. This allows easy customization of UI with simple HTML and CSS. It uses Websockets to communicate with broker.
 
-    MQTT broker. I used HiveMQ (27 MB). Any other MQTT broker, even cloud based, would do. This requires much less resource than a full-fledged webserver.
+    MQTT broker. I used HiveMQ (27 MB). Any other MQTT broker, even cloud based, would do.
 
     Device client based on MQTT API. I used Java API. However, C API is also available which can be used to run the logic in low-powered microcontroller; or Python API running on RPi. This involves two Java classes:
         SerialClient - Interacts with device implementing device specific calls for 0 , 1 and range messages
