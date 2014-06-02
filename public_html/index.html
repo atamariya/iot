@@ -29,23 +29,6 @@ and open the template in the editor.
                 };
             }
 
-
-            function getValue(device, callback) {
-                // Show pop-up with slider
-                $("dialog").style.display = "block";
-                $("dialog").onclick = function() {
-                    $("dialog").style.display = "none";
-                    // Don't make unnecessary calls
-                    if (device.value != $("points").value) {
-                        device.value = $("points").value;
-                        callback(device);
-                    }
-                };
-                var points = $("points");
-                points.min = device.min;
-                points.max = device.max;
-            }
-
             function applyFilter(filter) {
                 $("devices").innerHTML = "";
                 for (var k in d) {
