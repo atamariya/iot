@@ -82,8 +82,10 @@ function getWidget(device) {
 function getValue(device, callback) {
     // Show pop-up with slider
     $("dialog").style.display = "block";
+    $("slider").style.display = "block";
     $("dialog").onclick = function() {
         $("dialog").style.display = "none";
+        $("slider").style.display = "none";
         // Don't make unnecessary calls
         if (device.value != $("points").value) {
             device.value = $("points").value;

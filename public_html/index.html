@@ -23,9 +23,17 @@ and open the template in the editor.
                 redraw();
 
                 $("Physical").style.border = "inset";
-                $("dialog").style.display = "none";
                 $("Refresh").onclick = function() {
                     refresh();
+                };
+                $("bSettings").onclick = settingsDialog;
+            }
+            function settingsDialog() {
+                $("dialog").style.display = "block";
+                $("settings").style.display = "block";
+                $("dialog").onclick = function() {
+                    $("dialog").style.display = "none";
+                    $("settings").style.display = "none";
                 };
             }
 
@@ -48,6 +56,7 @@ and open the template in the editor.
             <div id="toolbar">
                 <input type="button" value="Refresh" id="Refresh">
                 <input type="button" value="Add">
+                <input type="button" value="Settings" id="bSettings">
             </div>
             <div id="tabs">
                 <input type="button" value="Physical" id="Physical">
@@ -69,8 +78,22 @@ and open the template in the editor.
             </div>
         </div>
         <div id="dialog">
+
             <div id="slider">
                 <input type="range" id="points" min="1" max="10">
+            </div>
+            <div id="settings">
+                Broker
+                <form name="s">
+                    <table>
+                        <tr><td>
+                                URL</td><td> <input name="host"></td></tr>
+                        <tr><td>
+                                Port</td><td> <input name="port"></td></tr>
+                        <tr><td colspan="2">
+                                <input type="submit" name="OK"></td></tr>
+                    </table>
+                </form>
             </div>
         </div>
     </body>

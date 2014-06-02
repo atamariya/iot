@@ -72,24 +72,34 @@ li {
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: gray;
-    opacity:0.4;
+    background-color: black;
+    opacity:0.8;
     z-index: 10;
     border-radius: 0;
     text-align: center;
     overflow: hidden ;
+    display: none;
 }
 
-#slider {
+#dialog div {
     background: blue;
     position: fixed;
     top: 30%;
+    display: none;
+}
+
+#slider {
     left: 30%;
     max-height: 5%;
     padding: 5%;
     transform: rotate(-90deg);
     -ms-transform:rotate(-90deg); /* IE 9 */
     -webkit-transform:rotate(-90deg); /* Opera, Chrome, and Safari */
+}
+
+#settings {
+    left: 10%;
+    padding: 2%;
 }
 
 /* Default styles first then media queries */
