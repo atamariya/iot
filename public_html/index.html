@@ -20,6 +20,8 @@ and open the template in the editor.
                 resolveHierarchy(b);
                 if (!d)
                     d = JSON.parse(localStorage["d"]);
+
+                connect();
                 redraw();
 
                 $("Physical").style.border = "inset";
@@ -27,14 +29,6 @@ and open the template in the editor.
                     refresh();
                 };
                 $("bSettings").onclick = settingsDialog;
-            }
-            function settingsDialog() {
-                $("dialog").style.display = "block";
-                $("settings").style.display = "block";
-                $("dialog").onclick = function() {
-                    $("dialog").style.display = "none";
-                    $("settings").style.display = "none";
-                };
             }
 
             function applyFilter(filter) {
@@ -84,15 +78,16 @@ and open the template in the editor.
             </div>
             <div id="settings">
                 Broker
-                <form name="s">
+                <form id="broker">
                     <table>
                         <tr><td>
-                                URL</td><td> <input name="host"></td></tr>
+                                Host</td><td> <input name="host"></td></tr>
                         <tr><td>
-                                Port</td><td> <input name="port"></td></tr>
-                        <tr><td colspan="2">
-                                <input type="submit" name="OK"></td></tr>
+                                Port</td><td> <input name="port" type="number"></td></tr>
                     </table>
+                    <button type="submit" value="Submit">Submit</button>
+                    <button type="reset" value="Reset">Reset</button>
+                    <button id="cancel" value="cancel">Cancel</button>
                 </form>
             </div>
         </div>

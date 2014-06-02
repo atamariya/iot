@@ -4,18 +4,7 @@ var $ = function(id) {
 
 var refreshInterval = 1000; //ms
 var connected = false;
-var client = new Messaging.Client("localhost", 8000,
-        "mHome" + String(Math.random() * 1000));
-
-client.onConnectionLost = function(responseObject) {
-    console.log("connection lost: " + responseObject.errorMessage);
-    connected = false;
-};
-
-client.onMessageArrived = function(message) {
-    processMessage(message);
-    console.log(message.destinationName + " " + message.payloadString);
-};
+var brokerURL, port, client;
 
 var options = {
     timeout: 60, //seconds
@@ -31,17 +20,41 @@ var options = {
 };
 
 function connect() {
-    if (!connected)
-        client.connect(options);
+    if (connected)
+        return;
+
+    brokerURL = localStorage["brokerURL"];
+    port = parseInt(localStorage["port"]);
+    if (!brokerURL || !port || typeof brokerURL !== 'string'
+            || typeof port !== 'number') {
+        settingsDialog();
+        return;
+    }
+
+    client = new Messaging.Client(brokerURL, port,
+            "mHome" + String(Math.random() * 1000));
+    client.onConnectionLost = function(responseObject) {
+        console.log("connection lost: " + responseObject.errorMessage);
+        connected = false;
+    };
+
+    client.onMessageArrived = function(message) {
+        processMessage(message);
+        console.log(message.destinationName + " " + message.payloadString);
+    };
+
+    client.connect(options);
 }
 function disconnect() {
     if (connected)
         client.disconnect();
-//                localStorage["d"] = JSON.stringify(d);
 }
-;
-connect();
 
+function send(msg) {
+    connect();
+    if (connected)
+        client.send(msg);
+}
 onunload = disconnect;
 
 var d = new Object();
@@ -226,7 +239,7 @@ function execute(device) {
     if (device.physical) {
         var msg = new Messaging.Message(String(device.value));
         msg.destinationName = "ctrl/" + device.id;
-        client.send(msg);
+        send(msg);
     } else {
         // Logical switches act on complete heirarchy
         device.children.forEach(function(child) {
@@ -234,4 +247,28 @@ function execute(device) {
             execute(child)
         });
     }
+}
+
+function settingsDialog() {
+    $("dialog").style.display = "block";
+    $("settings").style.display = "block";
+
+    $("broker").host.value = localStorage["brokerURL"];
+    $("broker").port.value = localStorage["port"];
+
+    $("broker").onsubmit = function() {
+        $("dialog").style.display = "none";
+        $("settings").style.display = "none";
+
+        // Remember pref
+        localStorage["brokerURL"] = $("broker").host.value;
+        localStorage["port"] = $("broker").port.value;
+        connect();
+        return false;
+    };
+
+    $("cancel").onclick = function() {
+        $("dialog").style.display = "none";
+        $("settings").style.display = "none";
+    };
 }

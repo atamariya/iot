@@ -101,6 +101,9 @@ li {
     left: 10%;
     padding: 2%;
 }
+#settings input {
+    width: 10em;
+}
 
 /* Default styles first then media queries */
 @media screen and (min-width: 480px)  {
