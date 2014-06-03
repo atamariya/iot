@@ -1,9 +1,4 @@
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
 <html>
     <head>
         <title>mHome</title>
@@ -29,6 +24,44 @@ and open the template in the editor.
                     refresh();
                 };
                 $("bSettings").onclick = settingsDialog;
+                $("edit").onclick = editDevice;
+            }
+
+            function editDevice() {
+                $("dialog").style.display = "block";
+                $("device").style.display = "block";
+
+                var id = this.value;
+                var form = $("deviceForm");
+                var device = d[id];
+                form.id.value = id;
+                form.name.value = device.name;
+                form.type.value = device.type;
+                form.max.value = device.max;
+                for(var i = 0; i < device.children.length; i++) {
+                    var name = getName(device.children[i]);
+                    form.children.options[i] = new Option(device.children[i].id, name);
+                }
+
+                $("deviceForm").onsubmit = function() {
+                    $("dialog").style.display = "none";
+                    $("device").style.display = "none";
+
+                    var form = $("deviceForm");
+                    var device = new Device(form.id.value, false);
+                    device.name = form.name.value;
+                    device.type = form.type.value;
+                    device.max = form.max.value;
+                    d[form.id.value] = device;
+                    draw(device);
+
+                    return false;
+                };
+
+                $("cancel").onclick = function() {
+                    $("dialog").style.display = "none";
+                    $("device").style.display = "none";
+                };
             }
 
             function applyFilter(filter) {
@@ -49,7 +82,7 @@ and open the template in the editor.
         <div>
             <div id="toolbar">
                 <input type="button" value="Refresh" id="Refresh">
-                <input type="button" value="Add">
+                <input type="button" value="vendor:deviceId" id="edit">
                 <input type="button" value="Settings" id="bSettings">
             </div>
             <div id="tabs">
@@ -60,14 +93,6 @@ and open the template in the editor.
             </div>
             <div id="main">
                 <ul id="devices">
-                    <!--li>
-                        <div class="device">
-                            <div class="type">type</div>
-                            <div class="name">name</div>
-                            <div class="child">6</div>
-                        </div>
-                    </li-->
-
                 </ul>
             </div>
         </div>
@@ -88,6 +113,29 @@ and open the template in the editor.
                     <button type="submit" value="Submit">Submit</button>
                     <button type="reset" value="Reset">Reset</button>
                     <button id="cancel" value="cancel">Cancel</button>
+                </form>
+            </div>
+            <div id="device">
+                Device
+                <form id="deviceForm">
+                    <table>
+                        <tr><td>
+                                ID</td><td><input name="id" disabled="disabled"> </td></tr>
+                        <tr><td>
+                                Name</td><td> <input name="name"></td></tr>
+                        <tr><td>
+                                Children</td><td> 
+                                <select name="children">
+                                </select>
+                            </td>
+                            <td> <button id="add">+</button></td>
+                        </tr>
+                    </table>
+                    <input name="type" type="hidden">
+                    <input name="max" type="hidden">
+                    <button type="submit" value="Submit">Submit</button>
+                    <button type="reset" value="Reset">Reset</button>
+                    <button name="cancel" value="cancel">Cancel</button>
                 </form>
             </div>
         </div>
