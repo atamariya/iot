@@ -84,12 +84,13 @@ li {
 #dialog div {
     background: blue;
     position: fixed;
-    top: 30%;
+    top: 20%;
     display: none;
 }
 
 #slider {
-    left: 30%;
+    top: 30% !important;
+    left: 23% !important;
     max-height: 5%;
     padding: 5%;
     transform: rotate(-90deg);
@@ -98,13 +99,18 @@ li {
 }
 
 #settings {
-    left: 10%;
+    left: 18%;
     padding: 2%;
 }
 #settings input {
     width: 10em;
 }
 
+#device {
+    top: 10%;
+    left: 5%;
+    padding: 2%;
+}
 /* Default styles first then media queries */
 @media screen and (min-width: 480px)  {
     #slider {

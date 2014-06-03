@@ -92,25 +92,6 @@ function getWidget(device) {
                         </div>';
 }
 
-function getValue(device, callback) {
-    // Show pop-up with slider
-    $("dialog").style.display = "block";
-    $("slider").style.display = "block";
-    $("dialog").onclick = function() {
-        $("dialog").style.display = "none";
-        $("slider").style.display = "none";
-        // Don't make unnecessary calls
-        if (device.value != $("points").value) {
-            device.value = $("points").value;
-            callback(device);
-        }
-    };
-    var points = $("points");
-    points.min = device.min;
-    points.max = device.max;
-    points.value = device.value;
-}
-
 function refresh() {
     connect();
     redraw();
@@ -247,6 +228,27 @@ function execute(device) {
             execute(child)
         });
     }
+}
+
+function getValue(device, callback) {
+    // Show pop-up with slider
+    $("dialog").style.display = "block";
+    $("slider").style.display = "block";
+    $("dialog").onclick = function() {
+        $("dialog").style.display = "none";
+        $("slider").style.display = "none";
+        
+        this.onclick = null;
+        // Don't make unnecessary calls
+        if (device.value != $("points").value) {
+            device.value = $("points").value;
+            callback(device);
+        }
+    };
+    var points = $("points");
+    points.min = device.min;
+    points.max = device.max;
+    points.value = device.value;
 }
 
 function settingsDialog() {
