@@ -32,6 +32,11 @@ ul {
 li {
     //margin-left: 0;
 }
+
+td {
+    text-align: left;
+}
+
 #toolbar {
     text-align: right;
 }

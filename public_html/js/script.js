@@ -43,7 +43,13 @@ function connect() {
         console.log(message.destinationName + " " + message.payloadString);
     };
 
-    client.connect(options);
+    try {
+        client.connect(options);
+    } catch (e) {
+        // Garbage setting. Re-initialize
+        localStorage.clear();
+        connect();
+    }
 }
 function disconnect() {
     if (connected)
@@ -237,7 +243,7 @@ function getValue(device, callback) {
     $("dialog").onclick = function() {
         $("dialog").style.display = "none";
         $("slider").style.display = "none";
-        
+
         this.onclick = null;
         // Don't make unnecessary calls
         if (device.value != $("points").value) {
