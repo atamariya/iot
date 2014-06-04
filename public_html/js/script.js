@@ -52,7 +52,12 @@ function connect() {
         connect();
     }
 }
+
+/**
+ * Cleanup routine.
+ */
 function disconnect() {
+    localStorage["d"] = JSON.stringify(d);
     if (connected)
         client.disconnect();
 }

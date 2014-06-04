@@ -9,12 +9,13 @@
         <script>
 
             function init() {
+//                localStorage.clear();
                 var b = new Device("ctrl/artifici/al", false);
                 b.max = 15;
 
-                resolveHierarchy(b);
-                if (!d)
+                if (localStorage["d"])
                     d = JSON.parse(localStorage["d"]);
+                resolveHierarchy(b);
 
                 connect();
                 redraw();
@@ -32,20 +33,26 @@
                 $("edit").onclick = editDevice;
             }
 
-            function editDevice() {
+            function editDevice(id) {
                 $("dialog").style.display = "block";
                 $("device").style.display = "block";
 
-                var id = this.value;
+                
                 var form = $("deviceForm");
                 var device = d[id];
-                form.id.value = id;
+                if (!device) {
+                    var cnt = localStorage["cnt"] || 0;
+                    cnt++;
+                    device = new Device("logical/" + cnt, false);
+                    localStorage["cnt"] = cnt;
+                }
+                form.id.value = device.id;
                 form.name.value = device.name;
                 form.type.value = device.type;
                 form.max.value = device.max;
 
                 // Handle reset
-                form.id.defaultValue = id;
+                form.id.defaultValue = device.id;
                 form.name.defaultValue = device.name;
                 form.type.defaultValue = device.type;
                 form.max.defaultValue = device.max;
@@ -64,7 +71,7 @@
                     device.name = form.name.value;
                     device.type = form.type.value;
                     device.max = form.max.value;
-                    d[form.id.value] = device;
+                    resolveHierarchy(device);
                     draw(device);
 
                     return false;
@@ -86,7 +93,7 @@
         <div>
             <div id="toolbar">
                 <input type="button" value="Refresh" id="Refresh">
-                <input type="button" value="vendor:deviceId" id="edit">
+                <input type="button" value="Add" id="edit">
                 <input type="button" value="Settings" id="bSettings">
             </div>
             <div id="tabs">

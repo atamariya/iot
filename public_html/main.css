@@ -21,7 +21,6 @@ div > div  {
 input {
     border-radius: 5px;
 }
-input:active { background: gray; } 
 
 ul {
     //list-style-image: url("icon.png");
@@ -67,6 +66,7 @@ td {
 .device .name {
     width: 70%;
     float: left;
+    margin: 0;
 }
 .device input {
     width: 10em;
@@ -122,6 +122,10 @@ td {
         padding: 1%;
         transform: rotate(0deg);
         -ms-transform:rotate(0deg); /* IE 9 */
+    }
+
+    .device .name {
+        margin: inherit;
     }
 }
 
