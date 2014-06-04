@@ -1,7 +1,7 @@
 iot
 ===
 
-The technology landscape is changing fast and for good. With HTML5 becoming standard and new protocols for M2M like MQTT getting stable, it's about time an application framework was designed using these. I've done a PoC with these components and am excited with the outcome.
+The technology landscape is changing fast and for good. With HTML5 becoming standard and protocols for M2M like MQTT getting wider acceptance, it's about time an application framework was designed using these. I've done a PoC with these components and am excited with the outcome.
 
 The framework consists of the following:
 
