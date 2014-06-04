@@ -47,7 +47,8 @@ function connect() {
         client.connect(options);
     } catch (e) {
         // Garbage setting. Re-initialize
-        localStorage.clear();
+        localStorage["brokerURL"] = "";
+        localStorage["port"] = "";
         connect();
     }
 }
@@ -271,6 +272,7 @@ function settingsDialog() {
         // Remember pref
         localStorage["brokerURL"] = $("broker").host.value;
         localStorage["port"] = $("broker").port.value;
+        disconnect();
         connect();
         return false;
     };

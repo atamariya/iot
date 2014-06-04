@@ -87,7 +87,7 @@ td {
 }
 
 #dialog div {
-    background: blue;
+    background: #2BA6CB;
     position: fixed;
     top: 20%;
     display: none;
