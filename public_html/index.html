@@ -38,6 +38,13 @@
                 form.name.value = device.name;
                 form.type.value = device.type;
                 form.max.value = device.max;
+                
+                // Handle reset
+                form.id.defaultValue = id;
+                form.name.defaultValue = device.name;
+                form.type.defaultValue = device.type;
+                form.max.defaultValue = device.max;
+                
                 for(var i = 0; i < device.children.length; i++) {
                     var name = getName(device.children[i]);
                     form.children.options[i] = new Option(device.children[i].id, name);

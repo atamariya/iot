@@ -264,6 +264,9 @@ function settingsDialog() {
 
     $("broker").host.value = localStorage["brokerURL"];
     $("broker").port.value = localStorage["port"];
+    // Handle reset
+    $("broker").host.defaultValue = localStorage["brokerURL"];
+    $("broker").port.defaultValue = localStorage["port"];
 
     $("broker").onsubmit = function() {
         $("dialog").style.display = "none";
