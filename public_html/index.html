@@ -20,6 +20,12 @@
                 redraw();
 
                 $("Physical").style.border = "inset";
+                $("Physical").onclick = function() {
+                    applyFilter("Physical");
+                };
+                $("Virtual").onclick = function() {
+                    applyFilter("Virtual");
+                };
                 $("Refresh").onclick = function() {
                     refresh();
                 };
@@ -38,14 +44,14 @@
                 form.name.value = device.name;
                 form.type.value = device.type;
                 form.max.value = device.max;
-                
+
                 // Handle reset
                 form.id.defaultValue = id;
                 form.name.defaultValue = device.name;
                 form.type.defaultValue = device.type;
                 form.max.defaultValue = device.max;
-                
-                for(var i = 0; i < device.children.length; i++) {
+
+                for (var i = 0; i < device.children.length; i++) {
                     var name = getName(device.children[i]);
                     form.children.options[i] = new Option(device.children[i].id, name);
                 }
@@ -71,14 +77,6 @@
                 };
             }
 
-            function applyFilter(filter) {
-                $("devices").innerHTML = "";
-                for (var k in d) {
-                    if (d[k].type == filter)
-                        draw(d[k]);
-                }
-            }
-
             onload = init;
         </script>
         <link rel="stylesheet" type="text/css" href="main.css"/>
@@ -94,7 +92,7 @@
             </div>
             <div id="tabs">
                 <input type="button" value="Physical" id="Physical">
-                <input type="button" value="Virtual">
+                <input type="button" value="Virtual" id="Virtual">
                 <input type="button" value="Rules">
                 <input type="button" value="Dashboard">
             </div>

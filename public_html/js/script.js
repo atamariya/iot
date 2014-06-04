@@ -121,12 +121,29 @@ function draw(device) {
 }
 
 function redraw() {
-    var elm = $("devices");
-    while (elm.firstChild) {
-        elm.removeChild(elm.firstChild);
-    }
+//    var elm = $("devices");
+//    while (elm.firstChild) {
+//        elm.removeChild(elm.firstChild);
+//    }
+    clear();
     for (var k in d)
         draw(d[k]);
+}
+
+function clear() {
+    $("devices").innerHTML = "";
+    $("Physical").style.border = "";
+    $("Virtual").style.border = "";
+}
+
+function applyFilter(filter) {
+    clear();
+    $(filter).style.border = "inset";
+    for (var k in d) {
+        if ((filter == "Physical" && d[k].physical == true)
+                || (filter == "Virtual" && d[k].physical == false))
+            draw(d[k]);
+    }
 }
 
 function processMessage(message) {
