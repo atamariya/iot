@@ -9,7 +9,7 @@
         <script>
 
             function init() {
-                var b = new Device("ctrl/artifici/al", true);
+                var b = new Device("ctrl/artifici/al", false);
                 b.max = 15;
 
                 resolveHierarchy(b);
@@ -19,7 +19,6 @@
                 connect();
                 redraw();
 
-                $("Physical").style.border = "inset";
                 $("Physical").onclick = function() {
                     applyFilter("Physical");
                 };

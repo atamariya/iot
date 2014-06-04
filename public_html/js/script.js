@@ -137,6 +137,12 @@ function clear() {
 }
 
 function applyFilter(filter) {
+    //Toggle logic
+    if ($(filter).style.border == "inset") {
+            redraw();
+        return;
+    }
+    
     clear();
     $(filter).style.border = "inset";
     for (var k in d) {
