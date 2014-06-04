@@ -73,16 +73,17 @@ var Device = function(id, physicalDevice, type) {
 
     /** Controls can have range of values unlike switch. max = 1 is 
      * switch. max > 1 is a control. */
-    this.value = this.min = this.max = 0;
+    this.value = this.min = 0;
+    this.max = 1;
     this.active = true;
     this.children = new Array();
     this.parent;
-    this.name;
-    this.type = type;
+    this.name = '';
+    this.type = type; // Control, sensor, switch
 
 };
 function getName(device) {
-    var str = (!device.name ? device.id : device.name);
+    var str = (device.name == '' ? device.id : device.name);
     return str.substring(0, 20);
 }
 function getWidget(device) {
@@ -138,11 +139,12 @@ function clear() {
 
 function applyFilter(filter) {
     //Toggle logic
-    if ($(filter).style.border == "inset") {
-            redraw();
+    if ($(filter).style["border-style"] == "inset"
+            || $(filter).style["borderStyle"] == "inset") {
+        redraw();
         return;
     }
-    
+
     clear();
     $(filter).style.border = "inset";
     for (var k in d) {
@@ -285,10 +287,10 @@ function settingsDialog() {
     $("dialog").style.display = "block";
     $("settings").style.display = "block";
 
-    $("broker").host.value = localStorage["brokerURL"];
+    $("broker").host.value = localStorage["brokerURL"] || '';
     $("broker").port.value = localStorage["port"];
     // Handle reset
-    $("broker").host.defaultValue = localStorage["brokerURL"];
+    $("broker").host.defaultValue = localStorage["brokerURL"] || '';
     $("broker").port.defaultValue = localStorage["port"];
 
     $("broker").onsubmit = function() {
