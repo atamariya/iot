@@ -94,7 +94,7 @@ function getName(device) {
 function getWidget(device) {
     var str = getName(device);
     if (device.type != "sensor") {
-        str = '<input type="button" value="' + getName(device)
+        str = '<input type="button" value="' + str
                 + '" onclick="publish(\'' + device.id
                 + '\')"' + (device.active ? '' : 'disabled') + '>';
     }
