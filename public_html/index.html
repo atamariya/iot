@@ -37,14 +37,14 @@
                 $("dialog").style.display = "block";
                 $("device").style.display = "block";
 
-                
+
                 var form = $("deviceForm");
                 var device = d[id];
+                var edit = true;
                 if (!device) {
-                    var cnt = localStorage["cnt"] || 0;
-                    cnt++;
+                    var cnt = parseInt(localStorage["cnt"] || 0);
                     device = new Device("logical/" + cnt, false);
-                    localStorage["cnt"] = cnt;
+                    edit = false;
                 }
                 form.id.value = device.id;
                 form.name.value = device.name;
@@ -57,14 +57,26 @@
                 form.type.defaultValue = device.type;
                 form.max.defaultValue = device.max;
 
-                for (var i = 0; i < device.children.length; i++) {
-                    var name = getName(device.children[i]);
-                    form.children.options[i] = new Option(device.children[i].id, name);
+                if (device.physical == true) {
+                    for (var i = 0; i < device.children.length; i++) {
+                        var name = getName(device.children[i]);
+                        form.children.options[i] = new Option(device.children[i].id, name);
+                    }
+                } else {
+                    var i = 0;
+                    for (var k in d) {
+                        var name = getName(d[k]);
+                        form.children.options[i++] = new Option(d[k].id, name);
+                    }
                 }
 
                 $("deviceForm").onsubmit = function() {
                     $("dialog").style.display = "none";
                     $("device").style.display = "none";
+
+                    var cnt = parseInt(localStorage["cnt"] || 0);
+                    localStorage["cnt"] = ++cnt;
+                    this.onsubmit = null;
 
                     var form = $("deviceForm");
                     var device = new Device(form.id.value, false);
@@ -77,7 +89,7 @@
                     return false;
                 };
 
-                $("cancel").onclick = function() {
+                $("deviceForm").cancel.onclick = function() {
                     $("dialog").style.display = "none";
                     $("device").style.display = "none";
                 };
@@ -123,7 +135,7 @@
                     </table>
                     <button type="submit" value="Submit">Submit</button>
                     <button type="reset" value="Reset">Reset</button>
-                    <button id="cancel" value="cancel">Cancel</button>
+                    <button type='button' name="cancel" value="cancel">Cancel</button>
                 </form>
             </div>
             <div id="device">
@@ -139,14 +151,14 @@
                                 <select name="children">
                                 </select>
                             </td>
-                            <td> <button id="add">+</button></td>
+                            <td> <button type='button' name="add">+</button></td>
                         </tr>
                     </table>
                     <input name="type" type="hidden">
                     <input name="max" type="hidden">
                     <button type="submit" value="Submit">Submit</button>
                     <button type="reset" value="Reset">Reset</button>
-                    <button name="cancel" value="cancel">Cancel</button>
+                    <button type='button' name="cancel" value="cancel">Cancel</button>
                 </form>
             </div>
         </div>

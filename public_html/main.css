@@ -47,6 +47,7 @@ td {
 #main {
     overflow-y: auto;
     overflow-x: hidden;
+    height: 20em;
 }
 .device {
     border-radius: 0;
@@ -86,7 +87,7 @@ td {
     display: none;
 }
 
-#dialog div {
+#dialog > div {
     background: #2BA6CB;
     position: fixed;
     top: 20%;

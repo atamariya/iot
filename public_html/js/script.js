@@ -310,7 +310,7 @@ function settingsDialog() {
         return false;
     };
 
-    $("cancel").onclick = function() {
+    $("broker").cancel.onclick = function() {
         $("dialog").style.display = "none";
         $("settings").style.display = "none";
     };
