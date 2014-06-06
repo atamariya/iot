@@ -386,9 +386,6 @@ function editDevice(id) {
     }
 
     $("deviceForm").onsubmit = function() {
-        $("dialog").style.display = "none";
-        $("device").style.display = "none";
-
         var cnt = parseInt(localStorage["cnt"] || 0);
         localStorage["cnt"] = ++cnt;
         this.onsubmit = null;
@@ -398,8 +395,16 @@ function editDevice(id) {
         device.name = form.name.value;
         device.type = form.type.value;
         device.max = form.max.value;
-        resolveHierarchy(device);
+        for (var i = 0; i < form.children.length; i++) {
+            var tmp = resolveHierarchy(new Device(form.children[i].value));
+            device.children.push(tmp);
+        }
         draw(device);
+
+        $("dialog").style.display = "none";
+        $("device").style.display = "none";
+        form.option.innerHTML = '';
+        form.children.innerHTML = '';
 
         return false;
     };
