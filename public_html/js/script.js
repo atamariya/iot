@@ -329,3 +329,95 @@ function settingsDialog() {
         $("settings").style.display = "none";
     };
 }
+
+function manageSelection(from, to) {
+    /* This must be done in two steps as select list length is
+     * re-evaluated after each removal :
+     * 1. Add to destination list. 
+     * 2. Remove from source list starting from end. 
+     */
+    for (var index = 0; index < from.length; index++) {
+        if (from[index].selected) {
+            var option = from[index];
+            to.add(new Option(option.text, option.value));
+        }
+    }
+    for (var index = from.length - 1; index >= 0; index--) {
+        if (from[index].selected) {
+            from.remove(index);
+        }
+    }
+}
+
+
+function editDevice(id) {
+    $("dialog").style.display = "block";
+    $("device").style.display = "block";
+
+    var form = $("deviceForm");
+    var device = d[id];
+    if (!device) {
+        var cnt = parseInt(localStorage["cnt"] || 0);
+        device = new Device("logical/" + cnt, false);
+    }
+    form.id.value = device.id;
+    form.name.value = device.name;
+    form.type.value = device.type;
+    form.max.value = device.max;
+
+    // Handle reset
+    form.id.defaultValue = device.id;
+    form.name.defaultValue = device.name;
+    form.type.defaultValue = device.type;
+    form.max.defaultValue = device.max;
+
+    for (var i = 0; i < device.children.length; i++) {
+        var name = getName(device.children[i]);
+        form.children.options[i] = new Option(device.children[i].id, name);
+    }
+    if (device.physical != true) {
+        $("choose").style.display = "";
+        var i = 0;
+        for (var k in d) {
+            var name = getName(d[k]);
+            form.option.options[i++] = new Option(d[k].id, name);
+        }
+    } else {
+        $("choose").style.display = "none";
+    }
+
+    $("deviceForm").onsubmit = function() {
+        $("dialog").style.display = "none";
+        $("device").style.display = "none";
+
+        var cnt = parseInt(localStorage["cnt"] || 0);
+        localStorage["cnt"] = ++cnt;
+        this.onsubmit = null;
+
+        var form = $("deviceForm");
+        var device = new Device(form.id.value, false);
+        device.name = form.name.value;
+        device.type = form.type.value;
+        device.max = form.max.value;
+        resolveHierarchy(device);
+        draw(device);
+
+        return false;
+    };
+
+    $("deviceForm").cancel.onclick = function() {
+        $("dialog").style.display = "none";
+        $("device").style.display = "none";
+        form.option.innerHTML = '';
+        form.children.innerHTML = '';
+    };
+
+    $("deviceForm").add.onclick = function() {
+        manageSelection(form.option, form.children);
+    };
+
+    $("deviceForm").remove.onclick = function() {
+        manageSelection(form.children, form.option);
+    };
+}
+
