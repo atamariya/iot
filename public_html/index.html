@@ -30,13 +30,22 @@
                     refresh();
                 };
                 $("bSettings").onclick = settingsDialog;
-                $("edit").onclick = editDevice;
+                $("add").onclick = editDevice;
+                $("edit").onclick = function() {
+                    if (!isPressed("edit")) {
+                        edit = true;
+                        $("edit").style.border = "inset";
+                    } else {
+                        edit = false;
+                        $("edit").style.border = "";
+                    }
+                    redraw();
+                }
             }
 
             function editDevice(id) {
                 $("dialog").style.display = "block";
                 $("device").style.display = "block";
-
 
                 var form = $("deviceForm");
                 var device = d[id];
@@ -57,17 +66,19 @@
                 form.type.defaultValue = device.type;
                 form.max.defaultValue = device.max;
 
-                if (device.physical == true) {
-                    for (var i = 0; i < device.children.length; i++) {
-                        var name = getName(device.children[i]);
-                        form.children.options[i] = new Option(device.children[i].id, name);
-                    }
-                } else {
+                for (var i = 0; i < device.children.length; i++) {
+                    var name = getName(device.children[i]);
+                    form.children.options[i] = new Option(device.children[i].id, name);
+                }
+                if (device.physical != true) {
+                    $("choose").style.display = "";
                     var i = 0;
                     for (var k in d) {
                         var name = getName(d[k]);
-                        form.children.options[i++] = new Option(d[k].id, name);
+                        form.option.options[i++] = new Option(d[k].id, name);
                     }
+                } else {
+                    $("choose").style.display = "none";
                 }
 
                 $("deviceForm").onsubmit = function() {
@@ -93,6 +104,16 @@
                     $("dialog").style.display = "none";
                     $("device").style.display = "none";
                 };
+
+                $("deviceForm").add.onclick = function() {
+                    var item = form.children[form.children.selectedIndex];
+                    form.children.remove(form.children.selectedIndex);
+                };
+
+                $("deviceForm").remove.onclick = function() {
+                    var item = form.children[form.children.selectedIndex];
+                    form.children.remove(form.children.selectedIndex);
+                };
             }
 
             onload = init;
@@ -105,7 +126,8 @@
         <div>
             <div id="toolbar">
                 <input type="button" value="Refresh" id="Refresh">
-                <input type="button" value="Add" id="edit">
+                <input type="button" value="Add" id="add">
+                <input type="button" value="Edit" id="edit">
                 <input type="button" value="Settings" id="bSettings">
             </div>
             <div id="tabs">
@@ -147,11 +169,21 @@
                         <tr><td>
                                 Name</td><td> <input name="name"></td></tr>
                         <tr><td>
-                                Children</td><td> 
-                                <select name="children">
-                                </select>
+                                Children</td><td>
                             </td>
-                            <td> <button type='button' name="add">+</button></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div><select name="children" multiple="true">
+                                    </select></div>
+                                <span id="choose">
+                                <div><button type='button' name="add" class="add"><</button>
+                                    <button type='button' name="remove" class="remove">></button>
+                                </div>
+                                <div><select name="option" multiple="true">
+                                    </select></div>
+                                </span>
+                            </td>
                         </tr>
                     </table>
                     <input name="type" type="hidden">

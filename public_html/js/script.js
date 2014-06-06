@@ -5,6 +5,7 @@ var $ = function(id) {
 var refreshInterval = 1000; //ms
 var connected = false;
 var brokerURL, port, client;
+var editMode = false; // Edit mode
 
 var options = {
     timeout: 60, //seconds
@@ -93,10 +94,16 @@ function getName(device) {
 }
 function getWidget(device) {
     var str = getName(device);
-    if (device.type != "sensor") {
+    if (editMode) {
         str = '<input type="button" value="' + str
-                + '" onclick="publish(\'' + device.id
-                + '\')"' + (device.active ? '' : 'disabled') + '>';
+                + '" onclick="editDevice(\'' + device.id
+                + '\')" >';
+    } else {
+        if (device.type != "sensor") {
+            str = '<input type="button" value="' + str
+                    + '" onclick="publish(\'' + device.id
+                    + '\')"' + (device.active ? '' : 'disabled') + '>';
+        }
     }
     return '<div id="' + device.id + '" class="device">\
                             <div class="type">' + device.type + '</div>\
@@ -142,10 +149,17 @@ function clear() {
     $("Virtual").style.border = "";
 }
 
-function applyFilter(filter) {
+function isPressed(id) {
     //Toggle logic
-    if ($(filter).style["border-style"] == "inset"
-            || $(filter).style["borderStyle"] == "inset") {
+    if ($(id).style["border-style"] == "inset"
+            || $(id).style["borderStyle"] == "inset") {
+        return true;
+    }
+    return false;
+}
+
+function applyFilter(filter) {
+    if (isPressed(filter)) {
         redraw();
         return;
     }
